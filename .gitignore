@@ -1,0 +1,9 @@
+
+# Berkas konfigurasi lingkungan
+# Berkas ini berisi kredensial sensitif dan tidak boleh dimasukkan ke repository.
+.env
+
+# Anda juga bisa menambahkan berkas .env lain jika ada, seperti:
+# .env.local
+# .env.development
+# .env.production
