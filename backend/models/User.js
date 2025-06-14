@@ -18,12 +18,12 @@ const userSchema= new mongoose.Schema({
   password : {type : String, required : true}
 });
 
-userSchema.pre('save', async function(next){
-  if (this.isModified('password')) {
-    this.password = await bcryptjs.hash(this.password, saltRounds);
-  }
-  next();
-});
+// userSchema.pre('save', async function(next){
+//   if (this.isModified('password')) {
+//     this.password = await bcryptjs.hash(this.password, saltRounds);
+//   }
+//   next();
+// });
 
 const User = mongoose.model('User',userSchema);
 module.exports= User ;
