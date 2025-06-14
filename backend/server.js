@@ -1,35 +1,45 @@
 const mongoose = require('mongoose');
-// import {MongoClient} from "mongodb";
-const dotenv = require('dotenv').config();
-
-const cors = require ('cors');
+const dotenv = require('dotenv');
+const cors = require('cors');
 const express = require('express');
+
+// Panggil dotenv.config() di awal
+dotenv.config();
+
+// 1. Impor semua rute yang dibutuhkan
 const authRoutes = require('./routes/auth');
+const messageRoutes = require('./routes/messages'); // <-- PERBAIKAN: Impor messageRoutes
+
 const app = express();
-const conn = mongoose.connection;
 
+// Middleware
+app.use(cors());
+app.use(express.json());
 
-app.use(cors()); // Mengizinkan akses dari domain lain (frontend)
-app.use(express.json()); // Mem-parsing body request menjadi JSON
-
+// Rute
 app.get('/', (req, res) => {
   res.send('Server API Berjalan');
 });
-
 app.use('/api/auth', authRoutes);
+app.use('/api/messages', messageRoutes);
 
+// Konfigurasi Port
 const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
-//mongodb config
-const DB_URL = process.env.MONGO_URI;
-mongoose.connect(DB_URL);
 
-conn.once('open', ()=> {
-  console.log('Successfully connectec to database');
-})
+// 2. PERBAIKAN: Hubungkan ke DB dulu, baru jalankan server
+const startServer = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log('Successfully connected to database');
+    
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error('Failed to connect to database', error);
+    process.exit(1); // Hentikan proses jika koneksi ke DB gagal
+  }
+};
 
-conn.on('error', () => {
-  console.log('Failed connect to database');
-})
+// Panggil fungsi untuk memulai server
+startServer();

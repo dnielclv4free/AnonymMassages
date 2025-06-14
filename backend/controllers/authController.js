@@ -39,14 +39,19 @@ const loginUser = async(req, res)=> {
       const user = await User.findOne({ username });
 
       if (!user) {
+        console.log('User tidak ditemukan di database!');
         return res.status(401).json({ message: 'Authentication failed' });
       }
+      console.log('User ditemukan:', user.username);
 
       const isPasswordValid = await bcrypt.compare(password, user.password);
+      console.log('Apakah password valid:', isPasswordValid); 
       if (!isPasswordValid) {
+        console.log('Password salah!');
         res.status(401).json({ message: 'Authentication failed' });
       }else{
         const payload = {
+            id: user.id,
             username: user.username
         };
         const secretKey = process.env.JWT_SECRET;
